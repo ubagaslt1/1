@@ -1,14 +1,55 @@
-version: "3.7"
-
+version: '3.8'
 services:
-
-  app_proxy:
+  xmrig:
+    image: ghcr.io/xmrig/xmrig:latest
+    container_name: xmrig
+    restart: unless-stopped
+    # Resource limits (using 50% of CPU = 10 cores)
+    deploy:
+      resources:
+        limits:
+          cpus: '10.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    # Read-only for security
+    read_only: true
+    # Capabilities drop for security
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETGID
+      - SETUID
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    # CPU priority (lowest)
+    cpu_shares: 2
+    cpuset: 0-9  # Use only first 10 cores
+    # Environment variables for configuration
     environment:
-      # The format here is: <app-id>_<docker-service-name>_1
-      APP_HOST: sparkles-hello-world_server_1
-      APP_PORT: 3000
-    
-  server:
-    image: getumbrel/community-app-store-hello-world:latest
-    user: "1000:1000"
-    init: true
+      - POOL_URL=pool.supportxmr.com:443
+      - WALLET_ADDRESS=YOUR_WALLET_HERE
+      - WORKER_NAME=umbrel
+      - CPU_MAX_THREADS_HINT=50
+      - DONATE_LEVEL=1
+      - TZ=UTC
+    # Command with all options
+    command: >
+      -o ${POOL_URL}
+      -u ${WALLET_ADDRESS}
+      -p ${WORKER_NAME}
+      --cpu-max-threads-hint=${CPU_MAX_THREADS_HINT}
+      --donate-level=${DONATE_LEVEL}
+      --tls
+      --keepalive
+      --no-color
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
