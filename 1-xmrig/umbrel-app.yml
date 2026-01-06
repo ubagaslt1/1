@@ -1,0 +1,11 @@
+name: xmrig
+version: 6.21.0
+tagline: CPU Miner for Monero
+description: XMRig is a high performance Monero (XMR) CPU miner
+category: Utilities
+developer: XMRig Developers
+website: https://xmrig.com
+port: 0  # No web interface
+dependencies: []
+repo: https://github.com/xmrig/xmrig
+support: https://github.com/xmrig/xmrig/issues
