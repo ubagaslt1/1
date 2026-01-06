@@ -1,43 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>XMRig Dashboard</title>
     <meta charset="UTF-8">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .status { padding: 10px; background: #f0f0f0; border-radius: 5px; }
-        .mining { color: green; }
-        .stopped { color: red; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XMRig Miner - Umbrel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    <h1>XMRig Mining Dashboard</h1>
-    <div class="status" id="status">Loading...</div>
-    <div id="stats"></div>
-    
-    <script>
-        async function updateStats() {
-            try {
-                const response = await fetch('http://localhost:18080/1/summary', {
-                    headers: { 'Authorization': 'Bearer umbrel' }
-                });
-                const data = await response.json();
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <nav class="tabs">
+            <button class="tab active" onclick="showTab('dashboard')">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </button>
+            <button class="tab" onclick="showTab('config')">
+                <i class="fas fa-cog"></i> Configuration
+            </button>
+            <button class="tab" onclick="showTab('pools')">
+                <i class="fas fa-server"></i> Pools
+            </button>
+            <button class="tab" onclick="showTab('hardware')">
+                <i class="fas fa-microchip"></i> Hardware
+            </button>
+            <button class="tab" onclick="showTab('logs')">
+                <i class="fas fa-terminal"></i> Logs
+            </button>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <!-- Real-time stats will be loaded by dashboard.js -->
+        </div>
+
+        <!-- Configuration Tab -->
+        <div id="config" class="tab-content">
+            <div class="config-editor">
+                <h2><i class="fas fa-edit"></i> JSON Configuration Editor</h2>
+                <div class="editor-controls">
+                    <button onclick="loadConfig()" class="btn btn-primary">
+                        <i class="fas fa-sync"></i> Load Current
+                    </button>
+                    <button onclick="saveConfig()" class="btn btn-success">
+                        <i class="fas fa-save"></i> Save & Apply
+                    </button>
+                    <button onclick="resetConfig()" class="btn btn-warning">
+                        <i class="fas fa-undo"></i> Reset to Defaults
+                    </button>
+                    <button onclick="downloadConfig()" class="btn btn-info">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <input type="file" id="configUpload" accept=".json" style="display:none">
+                    <button onclick="uploadConfig()" class="btn btn-secondary">
+                        <i class="fas fa-upload"></i> Upload
+                    </button>
+                </div>
                 
-                document.getElementById('status').innerHTML = `
-                    <h3 class="mining">● Mining Active</h3>
-                    <p>Hashrate: ${(data.hashrate.total[0] / 1000).toFixed(2)} kH/s</p>
-                    <p>Shares: ${data.results.shares_good} good, ${data.results.shares_total - data.results.shares_good} bad</p>
-                    <p>Uptime: ${Math.floor(data.uptime / 60)} minutes</p>
-                    <p>Threads: ${data.worker_id}</p>
-                `;
-            } catch (error) {
-                document.getElementById('status').innerHTML = 
-                    '<h3 class="stopped">● Mining Not Active</h3><p>Check XMRig container logs</p>';
-            }
-        }
-        
-        updateStats();
-        setInterval(updateStats, 5000);
-    </script>
+                <div class="editor-container">
+                    <textarea id="configEditor" spellcheck="false"></textarea>
+                    <div class="editor-info">
+                        <p><i class="fas fa-info-circle"></i> Edit the JSON configuration below. Click "Save & Apply" to restart XMRig with new settings.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other tabs would be implemented similarly -->
+    </div>
+
+    <script src="dashboard.js"></script>
 </body>
 </html>
