@@ -12,3 +12,18 @@ services:
       - "--pass=x"
       - "--donate-level=1"
       - "--coin=monero"
+      - "--http-enabled"  # Enable built-in HTTP API
+      - "--http-host=0.0.0.0"
+      - "--http-port=18080"
+      - "--http-access-token=umbrel"
+  
+  dashboard:
+    image: nginx:alpine
+    container_name: xmrig-dashboard
+    restart: unless-stopped
+    ports:
+      - "9999:80"  # Map to port 9999 from your umbrel-app.yml
+    volumes:
+      - ./dashboard:/usr/share/nginx/html
+    depends_on:
+      - xmrig
