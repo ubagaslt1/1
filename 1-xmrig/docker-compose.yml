@@ -1,29 +1,27 @@
 version: "3.8"
+
 services:
   xmrig:
-    image: xmrig/xmrig:latest
-    container_name: xmrig
+    build: .
+    container_name: xmrig-full-gui
     restart: unless-stopped
     network_mode: host
     privileged: true
-    command: 
-      - "--url=pool.supportxmr.com:443"
-      - "--user=YOUR_MONERO_WALLET_ADDRESS"
-      - "--pass=x"
-      - "--donate-level=1"
-      - "--coin=monero"
-      - "--http-enabled"  # Enable built-in HTTP API
-      - "--http-host=0.0.0.0"
-      - "--http-port=18080"
-      - "--http-access-token=umbrel"
-  
-  dashboard:
-    image: nginx:alpine
-    container_name: xmrig-dashboard
-    restart: unless-stopped
-    ports:
-      - "9999:80"  # Map to port 9999 from your umbrel-app.yml
     volumes:
-      - ./dashboard:/usr/share/nginx/html
-    depends_on:
-      - xmrig
+      - ./data:/data
+      - ./config:/config
+    ports:
+      - "9999:80"      # Web GUI
+      - "18080:18080"  # XMRig API
+    environment:
+      - XMRIG_VERSION=6.25.0
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/api/health.php"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
