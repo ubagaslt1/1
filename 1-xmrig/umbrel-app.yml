@@ -2,14 +2,22 @@ manifestVersion: 1
 id: "1"
 category: "utilities"
 name: "xmrig"
-version: "6.21.0"
-tagline: "Monero CPU Miner"
-description: "Official XMRig Docker image for CPU mining on Umbrel"
+version: "6.25.0"
+tagline: "Full GUI Configuration for XMRig"
+description: |
+  Official XMRig binary with complete web GUI for configuration.
+  Features:
+  - Real-time mining statistics
+  - Full configuration editor
+  - Pool management
+  - CPU/GPU settings
+  - Start/stop control
+  - Save/load configurations
 developer: "XMRig Developers"
 website: "https://xmrig.com"
-repo: "https://github.com/xmrig/xmrig"
+repo: "https://github.com/ubagaslt1/1/tree/master/1-xmrig"
 support: "https://github.com/xmrig/xmrig/issues"
-port: 0
+port: 9999
 dependencies: []
 icon: "https://raw.githubusercontent.com/xmrig/xmrig/master/src/images/icon.png"
 gallery:
