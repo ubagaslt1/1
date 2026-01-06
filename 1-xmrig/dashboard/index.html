@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XMRig Dashboard</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { padding: 10px; background: #f0f0f0; border-radius: 5px; }
+        .mining { color: green; }
+        .stopped { color: red; }
+    </style>
+</head>
+<body>
+    <h1>XMRig Mining Dashboard</h1>
+    <div class="status" id="status">Loading...</div>
+    <div id="stats"></div>
+    
+    <script>
+        async function updateStats() {
+            try {
+                const response = await fetch('http://localhost:18080/1/summary', {
+                    headers: { 'Authorization': 'Bearer umbrel' }
+                });
+                const data = await response.json();
+                
+                document.getElementById('status').innerHTML = `
+                    <h3 class="mining">● Mining Active</h3>
+                    <p>Hashrate: ${(data.hashrate.total[0] / 1000).toFixed(2)} kH/s</p>
+                    <p>Shares: ${data.results.shares_good} good, ${data.results.shares_total - data.results.shares_good} bad</p>
+                    <p>Uptime: ${Math.floor(data.uptime / 60)} minutes</p>
+                    <p>Threads: ${data.worker_id}</p>
+                `;
+            } catch (error) {
+                document.getElementById('status').innerHTML = 
+                    '<h3 class="stopped">● Mining Not Active</h3><p>Check XMRig container logs</p>';
+            }
+        }
+        
+        updateStats();
+        setInterval(updateStats, 5000);
+    </script>
+</body>
+</html>
